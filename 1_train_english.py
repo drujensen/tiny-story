@@ -25,6 +25,7 @@ os.environ["TORCHINDUCTOR_DISABLE"] = "1"
 # CORRECT allocator options for ROCm 6.4 (this is what actually works)
 os.environ["HIP_ALLOC_CONF"] = "expandable_segments:True"   # ← fixed variable name
 os.environ["HSA_FORCE_FINE_GRAIN_PCIE"] = "1"               # helps UMA page mapping
+os.environ["HSA_ENABLE_SDMA"] = "0"                         # stabilize allocations
 # os.environ["ROCM_MEM_DEFRAG"] = "1"                       # not needed with the above
 
 torch.set_float32_matmul_precision('high')
