@@ -33,7 +33,7 @@ torch.set_float32_matmul_precision('high')
 # ========================================
 # 1–4. Tokenizer / Dataset / Model (unchanged)
 # ========================================
-tokenizer = AutoTokenizer.from_pretrained("./gemma-3-1b")
+tokenizer = AutoTokenizer.from_pretrained("google/gemma-3-1b")
 if tokenizer.pad_token is None:
     tokenizer.pad_token = tokenizer.eos_token
 
@@ -58,7 +58,7 @@ tokenized_dataset = dataset.map(
     num_proc=1,
 )
 
-base_config = GemmaConfig.from_pretrained("./gemma-3-1b")
+base_config = GemmaConfig.from_pretrained("google/gemma-3-1b")
 new_config = base_config
 new_config.model_type = "gemma"
 new_config.hidden_size = 768
