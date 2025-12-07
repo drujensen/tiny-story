@@ -7,7 +7,6 @@ os.environ["TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL"] = "1"
 
 import torch
 torch.set_float32_matmul_precision('high')
-torch.backends.cuda.matmul.allow_tf32 = True
 
 from transformers import (
     AutoTokenizer,

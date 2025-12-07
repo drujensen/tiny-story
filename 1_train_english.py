@@ -28,7 +28,6 @@ os.environ["HSA_FORCE_FINE_GRAIN_PCIE"] = "1"               # helps UMA page map
 # os.environ["ROCM_MEM_DEFRAG"] = "1"                       # not needed with the above
 
 torch.set_float32_matmul_precision('high')
-torch.backends.cuda.matmul.allow_tf32 = True
 
 # ========================================
 # 1–4. Tokenizer / Dataset / Model (unchanged)
@@ -104,7 +103,7 @@ print(f"Warm-up successful — loss: {out.loss.item():.4f}, real tokens: {masked
 data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False, pad_to_multiple_of=8)
 
 training_args = TrainingArguments(
-    output_dir="./tiny_gemma_150m",
+    output_dir="./tiny-story-temp",
     overwrite_output_dir=True,
     num_train_epochs=5,
     per_device_train_batch_size=1,          # ultra-stable
