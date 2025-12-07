@@ -3,8 +3,8 @@ import os
 import torch
 from transformers import (
     AutoTokenizer,
+    AutoModelForCausalLM,
     GemmaConfig,
-    GemmaForCausalLM,
     Trainer,
     TrainingArguments,
     DataCollatorForLanguageModeling,
@@ -72,10 +72,10 @@ new_config.rope_theta = 10000.0
 new_config.attention_bias = False
 new_config.hidden_act = "gelu"
 new_config.pad_token_id = tokenizer.pad_token_id
-new_config.torch_dtype = torch.float32
+new_config.dtype = torch.float32
 new_config.use_cache = False
 
-model = GemmaForCausalLM(new_config)
+model = AutoModelForCausalLM.from_config(new_config)
 print(f"Model parameters: {model.num_parameters():,} (~150M)")
 
 # ========================================
