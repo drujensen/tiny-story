@@ -19,7 +19,7 @@ os.environ["PYTORCH_ROCM_ARCH"] = "gfx1100"            # Stable fallback kernels
 os.environ["ROCM_FORCE_CDNA_MODE"] = "0"
 os.environ["AMD_SERIALIZE_KERNEL"] = "1"
 os.environ["TORCH_USE_HIP_DSA"] = "1"
-# os.environ["HIP_VISIBLE_DEVICES"] = "0"
+os.environ["HIP_VISIBLE_DEVICES"] = "0"
 os.environ["TORCHINDUCTOR_DISABLE"] = "1"
 
 # CORRECT allocator options for ROCm 6.4 (this is what actually works)
@@ -33,7 +33,7 @@ torch.set_float32_matmul_precision('high')
 # ========================================
 # 1–4. Tokenizer / Dataset / Model (unchanged)
 # ========================================
-tokenizer = AutoTokenizer.from_pretrained("google/gemma-3-1b")
+tokenizer = AutoTokenizer.from_pretrained("./gemma-3-1b")
 if tokenizer.pad_token is None:
     tokenizer.pad_token = tokenizer.eos_token
 
@@ -58,7 +58,7 @@ tokenized_dataset = dataset.map(
     num_proc=1,
 )
 
-base_config = GemmaConfig.from_pretrained("google/gemma-3-1b")
+base_config = GemmaConfig.from_pretrained("./gemma-3-1b")
 new_config = base_config
 new_config.model_type = "gemma"
 new_config.hidden_size = 768
@@ -83,7 +83,7 @@ print(f"Model parameters: {model.num_parameters():,} (~150M)")
 # 5. Warm-up (CPU → GPU to avoid early HIP randint bug) - temporarily disabled
 # ========================================
 print("Skipping warm-up for testing...")
-device = "cpu"
+device = "cuda"
 model = model.to(device)        # ← now works!
 
 # ========================================
