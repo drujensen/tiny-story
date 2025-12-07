@@ -121,7 +121,7 @@ training_args = TrainingArguments(
     dataloader_num_workers=1,
     dataloader_pin_memory=False,
     report_to="none",
-    gradient_checkpointing=True,            # huge VRAM saver on APUs
+    gradient_checkpointing=False,            # temporarily disabled to test stability
     optim="adamw_torch",
 )
 
