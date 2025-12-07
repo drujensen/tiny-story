@@ -86,11 +86,11 @@ print("Warming up GPU kernels...")
 device = "cuda"
 model = model.to(device)        # ← now works!
 
-dummy_input_cpu = torch.randint(0, new_config.vocab_size, (2, 128))
+dummy_input_cpu = torch.randint(0, new_config.vocab_size, (1, 64))
 dummy_input = dummy_input_cpu.to(device)
 dummy_mask = torch.ones_like(dummy_input)
 dummy_labels = torch.full_like(dummy_input, -100, dtype=torch.long)
-dummy_labels[:, :64] = torch.arange(64).repeat(2, 1)
+dummy_labels[:, :32] = torch.arange(32).repeat(1, 1)
 
 with torch.no_grad():
     out = model(input_ids=dummy_input, attention_mask=dummy_mask, labels=dummy_labels)
