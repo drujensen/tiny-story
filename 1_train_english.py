@@ -59,23 +59,21 @@ tokenized_dataset = dataset.map(
 )
 
 base_config = GemmaConfig.from_pretrained("./gemma-3-1b")
-new_config = GemmaConfig(
-    vocab_size=base_config.vocab_size,
-    hidden_size=768,
-    intermediate_size=3072,
-    num_hidden_layers=32,
-    num_attention_heads=12,
-    num_key_value_heads=12,
-    head_dim=64,
-    max_position_embeddings=1024,
-    rms_norm_eps=1e-6,
-    rope_theta=10000.0,
-    attention_bias=False,
-    hidden_act="gelu",
-    pad_token_id=tokenizer.pad_token_id,
-    torch_dtype=torch.float32,
-    use_cache=False,
-)
+new_config = base_config
+new_config.hidden_size = 768
+new_config.intermediate_size = 3072
+new_config.num_hidden_layers = 32
+new_config.num_attention_heads = 12
+new_config.num_key_value_heads = 12
+new_config.head_dim = 64
+new_config.max_position_embeddings = 1024
+new_config.rms_norm_eps = 1e-6
+new_config.rope_theta = 10000.0
+new_config.attention_bias = False
+new_config.hidden_act = "gelu"
+new_config.pad_token_id = tokenizer.pad_token_id
+new_config.torch_dtype = torch.float32
+new_config.use_cache = False
 
 model = GemmaForCausalLM(new_config)
 print(f"Model parameters: {model.num_parameters():,} (~150M)")
