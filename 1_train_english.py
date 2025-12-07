@@ -107,7 +107,7 @@ training_args = TrainingArguments(
     overwrite_output_dir=True,
     num_train_epochs=5,
     per_device_train_batch_size=1,          # ultra-stable
-    gradient_accumulation_steps=32,         # effective batch = 32
+    gradient_accumulation_steps=16,         # effective batch = 16
     learning_rate=4e-4,
     weight_decay=0.01,
     warmup_ratio=0.03,
