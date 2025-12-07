@@ -60,6 +60,7 @@ tokenized_dataset = dataset.map(
 
 base_config = GemmaConfig.from_pretrained("./gemma-3-1b")
 new_config = base_config
+new_config.model_type = "gemma"
 new_config.hidden_size = 768
 new_config.intermediate_size = 3072
 new_config.num_hidden_layers = 32
