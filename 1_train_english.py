@@ -83,7 +83,7 @@ print(f"Model parameters: {model.num_parameters():,} (~150M)")
 # 5. Warm-up (CPU → GPU to avoid early HIP randint bug) - temporarily disabled
 # ========================================
 print("Skipping warm-up for testing...")
-device = "cuda"
+device = "cpu"
 model = model.to(device)        # ← now works!
 
 # ========================================
