@@ -39,7 +39,7 @@ if tokenizer.pad_token is None:
 
 print("Loading TinyStories dataset...")
 dataset = load_dataset("roneneldan/TinyStories", split="train")
-dataset = dataset.select(range(200_000))          # remove later for full dataset
+dataset = dataset.select(range(100_000))          # reduced for testing stability
 
 MAX_LENGTH = 1024
 def tokenize_function(examples):
