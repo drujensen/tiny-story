@@ -73,7 +73,7 @@ new_config.rope_theta = 10000.0
 new_config.attention_bias = False
 new_config.hidden_act = "gelu"
 new_config.pad_token_id = tokenizer.pad_token_id
-new_config.dtype = torch.float32
+
 new_config.use_cache = False
 
 model = AutoModelForCausalLM.from_config(new_config)
