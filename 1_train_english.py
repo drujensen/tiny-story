@@ -73,7 +73,7 @@ new_config = GemmaConfig(
     attention_bias=False,
     hidden_act="gelu",
     pad_token_id=tokenizer.pad_token_id,
-    torch_dtype=torch.bfloat16,
+    torch_dtype=torch.float32,
     use_cache=False,
 )
 
@@ -116,7 +116,7 @@ training_args = TrainingArguments(
     logging_steps=10,
     save_steps=2500,
     save_total_limit=3,
-    bf16=True,
+    bf16=False,
     fp16=False,
     torch_compile=False,
     dataloader_num_workers=1,
