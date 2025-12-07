@@ -4,7 +4,9 @@ import torch
 from transformers import (
     AutoTokenizer,
     AutoModelForCausalLM,
+    AutoConfig,
     GemmaConfig,
+    GemmaForCausalLM,
     Trainer,
     TrainingArguments,
     DataCollatorForLanguageModeling,
@@ -58,25 +60,20 @@ tokenized_dataset = dataset.map(
     num_proc=1,
 )
 
-base_config = GemmaConfig.from_pretrained("./gemma-3-1b")
-new_config = base_config
-new_config.model_type = "gemma"
-new_config.hidden_size = 768
-new_config.intermediate_size = 3072
-new_config.num_hidden_layers = 18
-new_config.num_attention_heads = 12
-new_config.num_key_value_heads = 12
-new_config.head_dim = 64
-new_config.max_position_embeddings = 1024
-new_config.rms_norm_eps = 1e-6
-new_config.rope_theta = 10000.0
-new_config.attention_bias = False
-new_config.hidden_act = "gelu"
-new_config.pad_token_id = tokenizer.pad_token_id
+base_config = AutoConfig.from_pretrained("./gemma-3-1b")
 
-new_config.use_cache = False
+new_config = GemmaConfig(
+    hidden_size=512,
+    intermediate_size=512,
+    num_hidden_layers=32,
+    num_attention_heads=4,
+    num_key_value_heads=4,
+    max_position_embeddings=512,
+    vocab_size=base_config.vocab_size,
+    pad_token_id=tokenizer.pad_token_id,
+)
 
-model = AutoModelForCausalLM.from_config(new_config)
+model = GemmaForCausalLM(new_config)
 print(f"Model parameters: {model.num_parameters():,} (~150M)")
 
 # ========================================

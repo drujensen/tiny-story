@@ -3,6 +3,15 @@
 
 import os
 os.environ["HSA_OVERRIDE_GFX_VERSION"] = "11.0.0"
+os.environ["PYTORCH_ROCM_ARCH"] = "gfx1100"
+os.environ["ROCM_FORCE_CDNA_MODE"] = "0"
+os.environ["AMD_SERIALIZE_KERNEL"] = "1"
+os.environ["TORCH_USE_HIP_DSA"] = "1"
+os.environ["HIP_VISIBLE_DEVICES"] = "0"
+os.environ["TORCHINDUCTOR_DISABLE"] = "1"
+os.environ["HIP_ALLOC_CONF"] = "expandable_segments:True"
+os.environ["HSA_FORCE_FINE_GRAIN_PCIE"] = "1"
+os.environ["HSA_ENABLE_SDMA"] = "0"
 os.environ["TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL"] = "1"
 
 import torch
@@ -60,7 +69,7 @@ tokenized_dataset = dataset.map(
     tokenize_function,
     batched=True,
     remove_columns=dataset.column_names,
-    num_proc=4,
+    num_proc=1,
 )
 
 # ========================================
@@ -79,7 +88,7 @@ training_args = TrainingArguments(
     output_dir="./tiny-story-tools",
     overwrite_output_dir=True,
     num_train_epochs=1,
-    per_device_train_batch_size=2,
+    per_device_train_batch_size=1,
     gradient_accumulation_steps=16,
     learning_rate=2e-5,
     weight_decay=0.01,
@@ -88,10 +97,11 @@ training_args = TrainingArguments(
     logging_steps=20,
     save_steps=1000,
     save_total_limit=2,
-    bf16=True,
+    bf16=False,
+    fp16=False,
     torch_compile=False,
-    dataloader_num_workers=4,
-    dataloader_pin_memory=True,
+    dataloader_num_workers=1,
+    dataloader_pin_memory=False,
     report_to="none",
     gradient_checkpointing=False,
     optim="adamw_torch",
