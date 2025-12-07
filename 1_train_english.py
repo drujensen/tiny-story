@@ -81,22 +81,11 @@ model = GemmaForCausalLM(new_config)
 print(f"Model parameters: {model.num_parameters():,} (~150M)")
 
 # ========================================
-# 5. Warm-up (CPU → GPU to avoid early HIP randint bug)
+# 5. Warm-up (CPU → GPU to avoid early HIP randint bug) - temporarily disabled
 # ========================================
-print("Warming up GPU kernels...")
+print("Skipping warm-up for testing...")
 device = "cuda"
 model = model.to(device)        # ← now works!
-
-dummy_input_cpu = torch.randint(0, new_config.vocab_size, (1, 64))
-dummy_input = dummy_input_cpu.to(device)
-dummy_mask = torch.ones_like(dummy_input)
-dummy_labels = torch.full_like(dummy_input, -100, dtype=torch.long)
-dummy_labels[:, :32] = torch.arange(32).repeat(1, 1)
-
-with torch.no_grad():
-    out = model(input_ids=dummy_input, attention_mask=dummy_mask, labels=dummy_labels)
-    masked_tokens = dummy_labels.ne(-100).sum().item()
-print(f"Warm-up successful — loss: {out.loss.item():.4f}, real tokens: {masked_tokens}")
 
 # ========================================
 # 6–9. Rest unchanged (low-pressure settings that survive page faults)
