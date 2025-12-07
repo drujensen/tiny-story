@@ -19,7 +19,7 @@ os.environ["PYTORCH_ROCM_ARCH"] = "gfx1100"            # Stable fallback kernels
 os.environ["ROCM_FORCE_CDNA_MODE"] = "0"
 os.environ["AMD_SERIALIZE_KERNEL"] = "1"
 os.environ["TORCH_USE_HIP_DSA"] = "1"
-os.environ["HIP_VISIBLE_DEVICES"] = "0"
+# os.environ["HIP_VISIBLE_DEVICES"] = "0"
 os.environ["TORCHINDUCTOR_DISABLE"] = "1"
 
 # CORRECT allocator options for ROCm 6.4 (this is what actually works)
