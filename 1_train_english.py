@@ -13,23 +13,6 @@ from transformers import (
 )
 from datasets import load_dataset
 
-# ========================================
-# ROCm 6.4 + gfx1150 fixes (Dec 2025 working combo)
-# ========================================
-os.environ["HSA_OVERRIDE_GFX_VERSION"] = "11.0.0"      # gfx1150
-os.environ["PYTORCH_ROCM_ARCH"] = "gfx1100"            # Stable fallback kernels
-os.environ["ROCM_FORCE_CDNA_MODE"] = "0"
-os.environ["AMD_SERIALIZE_KERNEL"] = "1"
-os.environ["TORCH_USE_HIP_DSA"] = "1"
-os.environ["HIP_VISIBLE_DEVICES"] = "0"
-os.environ["TORCHINDUCTOR_DISABLE"] = "1"
-
-# CORRECT allocator options for ROCm 6.4 (this is what actually works)
-os.environ["HIP_ALLOC_CONF"] = "expandable_segments:True"   # ← fixed variable name
-os.environ["HSA_FORCE_FINE_GRAIN_PCIE"] = "1"               # helps UMA page mapping
-os.environ["HSA_ENABLE_SDMA"] = "0"                         # stabilize allocations
-# os.environ["ROCM_MEM_DEFRAG"] = "1"                       # not needed with the above
-
 torch.set_float32_matmul_precision('high')
 
 # ========================================
@@ -68,7 +51,7 @@ new_config = GemmaConfig(
     num_hidden_layers=32,
     num_attention_heads=4,
     num_key_value_heads=4,
-    max_position_embeddings=512,
+    max_position_embeddings=1024,
     vocab_size=base_config.vocab_size,
     pad_token_id=tokenizer.pad_token_id,
 )
@@ -92,8 +75,8 @@ training_args = TrainingArguments(
     output_dir="./tiny-story-temp",
     overwrite_output_dir=True,
     num_train_epochs=5,
-    per_device_train_batch_size=1,          # ultra-stable
-    gradient_accumulation_steps=16,         # effective batch = 16
+    per_device_train_batch_size=8,          # increased for faster training
+    gradient_accumulation_steps=16,         # effective batch = 128
     learning_rate=4e-4,
     weight_decay=0.01,
     warmup_ratio=0.03,
