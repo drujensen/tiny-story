@@ -70,3 +70,40 @@ from transformers import pipeline
 pipe = pipeline('text-generation', model='./tiny-story', device=0)
 print(pipe("Once upon a time"))
 ```
+
+## Converting Chat Model to Ollama
+
+To use the fine-tuned chat model (`tiny-story-chat/`) with Ollama, convert it to GGUF format first.
+
+### Prerequisites
+- Install Ollama from https://ollama.ai/
+- Install sentencepiece: `pip install sentencepiece`
+
+### Conversion Steps
+
+1. Clone and build llama.cpp:
+   ```bash
+   git clone https://github.com/ggerganov/llama.cpp
+   cd llama.cpp
+   make
+   ```
+
+2. Convert the Hugging Face model to GGUF:
+   ```bash
+   python ../../cpp/llama.cpp/convert_hf_to_gguf.py ./tiny-story-chat --outtype f16 --outfile ../../ollama/tiny_story_chat.gguf
+   ```
+
+3. Create a Modelfile in the project root:
+   ```
+   FROM tiny-story-chat.gguf
+   ```
+
+4. Create the Ollama model:
+   ```bash
+   ollama create tiny-story-chat -f Modelfile
+   ```
+
+5. Run the model:
+   ```bash
+   ollama run tiny-story-chat
+   ```

@@ -43,20 +43,32 @@ print("Loading Hermes-2.5 dataset...")
 dataset = load_dataset("teknium/OpenHermes-2.5", split="train")
 
 # Optional: use a subset for quick testing
-dataset = dataset.select(range(50_000))  # ~5% of the data
+dataset = dataset.select(range(50_000))  # balanced data for improvement
 
 # ========================================
 # 3. Tokenization with chat template
 # ========================================
-MAX_LENGTH = 1024
+MAX_LENGTH = 512
 
 def tokenize_function(examples):
     texts = []
     for conv in examples["conversations"]:
+        # Convert to standard chat format
+        messages = []
+        for msg in conv:
+            role = msg["from"]
+            if role == "human":
+                role = "user"
+            elif role == "gpt":
+                role = "assistant"
+            elif role == "system":
+                # Skip system messages or prepend to first user message
+                continue
+            messages.append({"role": role, "content": msg["value"]})
         # Apply chat template
-        text = tokenizer.apply_chat_template(conv, tokenize=False, add_generation_prompt=False)
+        text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=False)
         texts.append(text)
-    
+
     outputs = tokenizer(
         texts,
         truncation=True,
@@ -88,10 +100,10 @@ data_collator = DataCollatorForLanguageModeling(
 training_args = TrainingArguments(
     output_dir="./tiny-story-chat",
     overwrite_output_dir=True,
-    num_train_epochs=1,  # fine-tuning, 1 epoch
+    num_train_epochs=2,  # balanced epochs for improvement
     per_device_train_batch_size=8,
     gradient_accumulation_steps=16,
-    learning_rate=2e-5,  # lower for fine-tuning
+    learning_rate=5e-5,  # slightly higher for better adaptation
     weight_decay=0.01,
     warmup_ratio=0.03,
     lr_scheduler_type="cosine",
