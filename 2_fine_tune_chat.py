@@ -1,19 +1,6 @@
 # 2_fine_tune_chat.py
 # Fine-tune the trained TinyStory model on Hermes-2.5 chat dataset
 
-import os
-os.environ["HSA_OVERRIDE_GFX_VERSION"] = "11.0.0"
-os.environ["PYTORCH_ROCM_ARCH"] = "gfx1100"
-os.environ["ROCM_FORCE_CDNA_MODE"] = "0"
-os.environ["AMD_SERIALIZE_KERNEL"] = "1"
-os.environ["TORCH_USE_HIP_DSA"] = "1"
-os.environ["HIP_VISIBLE_DEVICES"] = "0"
-os.environ["TORCHINDUCTOR_DISABLE"] = "1"
-os.environ["HIP_ALLOC_CONF"] = "expandable_segments:True"
-os.environ["HSA_FORCE_FINE_GRAIN_PCIE"] = "1"
-os.environ["HSA_ENABLE_SDMA"] = "0"
-os.environ["TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL"] = "1"
-
 import torch
 torch.set_float32_matmul_precision('high')
 

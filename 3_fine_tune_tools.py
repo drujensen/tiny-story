@@ -1,19 +1,6 @@
 # 3_fine_tune_tools.py
 # Fine-tune the chat model on tool calling dataset
 
-import os
-os.environ["HSA_OVERRIDE_GFX_VERSION"] = "11.0.0"
-os.environ["PYTORCH_ROCM_ARCH"] = "gfx1100"
-os.environ["ROCM_FORCE_CDNA_MODE"] = "0"
-os.environ["AMD_SERIALIZE_KERNEL"] = "1"
-os.environ["TORCH_USE_HIP_DSA"] = "1"
-os.environ["HIP_VISIBLE_DEVICES"] = "0"
-os.environ["TORCHINDUCTOR_DISABLE"] = "1"
-os.environ["HIP_ALLOC_CONF"] = "expandable_segments:True"
-os.environ["HSA_FORCE_FINE_GRAIN_PCIE"] = "1"
-os.environ["HSA_ENABLE_SDMA"] = "0"
-os.environ["TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL"] = "1"
-
 import torch
 torch.set_float32_matmul_precision('high')
 
@@ -48,7 +35,7 @@ dataset = dataset.select(range(50_000))
 # ========================================
 # 3. Tokenization with chat template
 # ========================================
-MAX_LENGTH = 1024
+MAX_LENGTH = 512
 
 def tokenize_function(examples):
     texts = []

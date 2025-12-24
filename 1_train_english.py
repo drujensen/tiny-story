@@ -1,5 +1,4 @@
 # 1_train_english.py — 100% working on Fedora 43 + ROCm 6.4 + Radeon 8060S
-import os
 import torch
 from transformers import (
     AutoTokenizer,
