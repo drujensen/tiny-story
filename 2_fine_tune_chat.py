@@ -1,8 +1,8 @@
 # 2_fine_tune_chat.py
 # Fine-tune the trained TinyStory model on Hermes-2.5 chat dataset
 
+import os
 import torch
-torch.set_float32_matmul_precision('high')
 
 from transformers import (
     AutoTokenizer,
@@ -13,29 +13,17 @@ from transformers import (
 )
 from datasets import load_dataset
 
-# ========================================
-# 1. Load tokenizer and model
-# ========================================
+torch.set_float32_matmul_precision('high')
+os.environ['TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL'] = '1'
+
 tokenizer = AutoTokenizer.from_pretrained("./tiny-story")
-if tokenizer.pad_token is None:
-    tokenizer.pad_token = tokenizer.eos_token
 
-model = AutoModelForCausalLM.from_pretrained("./tiny-story")
-model = model.to('cuda')
-
-# ========================================
-# 2. Load Hermes-2.5 dataset
-# ========================================
 print("Loading Hermes-2.5 dataset...")
 dataset = load_dataset("teknium/OpenHermes-2.5", split="train")
-
-# Optional: use a subset for quick testing
 dataset = dataset.select(range(50_000))  # balanced data for improvement
 
-# ========================================
-# 3. Tokenization with chat template
-# ========================================
-MAX_LENGTH = 512
+MAX_LENGTH = 1024
+
 
 def tokenize_function(examples):
     texts = []
@@ -65,6 +53,7 @@ def tokenize_function(examples):
     )
     return outputs
 
+
 tokenized_dataset = dataset.map(
     tokenize_function,
     batched=True,
@@ -72,25 +61,22 @@ tokenized_dataset = dataset.map(
     num_proc=1,
 )
 
-# ========================================
-# 4. Data collator
-# ========================================
+model = AutoModelForCausalLM.from_pretrained("./tiny-story")
+model = model.to('cuda')
+
 data_collator = DataCollatorForLanguageModeling(
     tokenizer=tokenizer,
-    mlm=False,  # causal LM
+    mlm=False,
     pad_to_multiple_of=8,
 )
 
-# ========================================
-# 5. Training arguments
-# ========================================
 training_args = TrainingArguments(
     output_dir="./tiny-story-chat",
     overwrite_output_dir=True,
-    num_train_epochs=2,  # balanced epochs for improvement
+    num_train_epochs=2,
     per_device_train_batch_size=8,
     gradient_accumulation_steps=16,
-    learning_rate=5e-5,  # slightly higher for better adaptation
+    learning_rate=5e-5,
     weight_decay=0.01,
     warmup_ratio=0.03,
     lr_scheduler_type="cosine",
