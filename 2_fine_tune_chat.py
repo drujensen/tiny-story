@@ -3,7 +3,6 @@
 
 import os
 import torch
-
 from transformers import (
     AutoTokenizer,
     AutoModelForCausalLM,
@@ -17,6 +16,8 @@ torch.set_float32_matmul_precision('high')
 os.environ['TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL'] = '1'
 
 tokenizer = AutoTokenizer.from_pretrained("./tiny-story")
+if tokenizer.pad_token is None:
+    tokenizer.pad_token = tokenizer.eos_token
 
 print("Loading Hermes-2.5 dataset...")
 dataset = load_dataset("teknium/OpenHermes-2.5", split="train")
@@ -73,7 +74,7 @@ data_collator = DataCollatorForLanguageModeling(
 training_args = TrainingArguments(
     output_dir="./tiny-story-chat",
     overwrite_output_dir=True,
-    num_train_epochs=2,
+    num_train_epochs=5,
     per_device_train_batch_size=8,
     gradient_accumulation_steps=16,
     learning_rate=5e-5,
